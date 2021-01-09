@@ -1,6 +1,5 @@
 package trainingsapp.backend;
 
-import java.sql.PreparedStatement;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -23,14 +22,14 @@ class UserController {
         prepareStatements();
     }
 
-    private void prepareStatements() {
+    private void prepareStatements() throws BackendException {
         try {
             SELECT_ALL_USERS = session.prepare("SELECT * FROM users;");
             SELECT_USER_BY_ID = session.prepare("SELECT * FROM users WHERE userId=?;");
             SELECT_USER_BY_PHONE = session.prepare("SELECT * FROM users WHERE phone=?;");
             INSERT_USER = session.prepare("INSERT INTO users (userId, name, phone) VALUES (?,?,?);");
             DELETE_USER = session.prepare("DELETE FROM users WHERE userId=?;");
-        } catch (Execution e) {
+        } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
         }
     }
@@ -60,7 +59,7 @@ class UserController {
     }
 
     // deleteUser - deletes user and related reservations
-    public void deleteUser(String userId) {
+    public void deleteUser(String userId) throws BackendException {
         BoundStatement deleteUser = new BoundStatement(DELETE_USER);
         //TODO: delete reservations
         try {
@@ -71,11 +70,12 @@ class UserController {
         }
     }
 
-    public User selectUserById(String userId) {
+    public User selectUserById(String userId) throws BackendException {
         BoundStatement selectUser = new BoundStatement(SELECT_USER_BY_ID);
         ResultSet rs = null;
 
         try {
+            selectUser.bind(userId);
             rs = session.execute(selectUser);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -83,10 +83,10 @@ class UserController {
 
         String name = rs.one().getString("name");
         int phone = rs.one().getInt("phone");
-        return User(userId, name, phone);
+        return new User(userId, name, phone);
     }
 
-    public LinkedList<User> selectAllUsers() {
+    public LinkedList<User> selectAllUsers() throws BackendException {
         LinkedList<User> users = new LinkedList<>();
         BoundStatement selectAllUsers = new BoundStatement(SELECT_ALL_USERS);
         ResultSet rs = null;

@@ -4,21 +4,23 @@ import java.util.UUID;
 
 class Reservation {
     public String user;
-    public String trainingName;
-    public int timeslot;
+    public String training;
     public long reservationTime;
-
-    public Reservation(String user, String trainingName, int timeslot, long reservationTime) {
+    
+    public Reservation(String user, String training) {
         this.user = user;
-        this.trainingName = trainingName;
-        this.timeslot = timeslot;
+        this.training = training;
+    }
+
+    public Reservation(String user, String training, long reservationTime) {
+        this.user = user;
+        this.training = training;
         this.reservationTime = reservationTime;
     }
 
     public boolean equals(Reservation reservation) {
         return this.user.equals(reservation.user) &&
-               this.trainingName.equals(reservation.trainingName) &&
-               this.timeslot == reservation.timeslot &&
-               this.reservationTime == reservation.timeslot;
+               this.training.equals(reservation.training) &&
+               this.reservationTime == reservation.reservationTime;
     }
 }

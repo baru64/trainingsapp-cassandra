@@ -11,7 +11,7 @@ class Simulation {
         this.backendSession = session;
     }
     
-    public run() {
+    public void run() {
         // TODO: run multiple threads simulating clients
     }
 }

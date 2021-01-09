@@ -17,15 +17,15 @@ CREATE TABLE Rooms (
 );
 
 CREATE TABLE Trainings (
+  trainingId UUID,
   name varchar,
   timeslot int,
-  PRIMARY KEY (timeslot, name)
+  PRIMARY KEY (trainingID, name, timeslot)
 );
 
 CREATE TABLE Reservations (
   user UUID,
-  trainingName varchar,
-  timeslot int,
+  training UUID,
   reservationTime timestamp,
-  PRIMARY KEY (trainingName, user)
+  PRIMARY KEY (training, user)
 );
