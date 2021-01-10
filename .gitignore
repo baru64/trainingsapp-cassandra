@@ -1,3 +1,4 @@
 CassandraDemo/
 venv/
 .vagrant/
+.gradle/

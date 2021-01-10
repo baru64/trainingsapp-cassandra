@@ -7,7 +7,7 @@ CREATE TABLE Users (
   userId UUID,
   name varchar,
   phone int,
-  PRIMARY KEY (userId, phone)
+  PRIMARY KEY (name, userId)
 );
 
 CREATE TABLE Rooms (
@@ -20,12 +20,14 @@ CREATE TABLE Trainings (
   trainingId UUID,
   name varchar,
   timeslot int,
-  PRIMARY KEY (trainingID, name, timeslot)
+  PRIMARY KEY (name, trainingId)
 );
 
 CREATE TABLE Reservations (
   user UUID,
+  userName varchar,
   training UUID,
+  trainingName varchar,
   reservationTime timestamp,
   PRIMARY KEY (training, user)
 );

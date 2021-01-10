@@ -1,7 +1,6 @@
 package trainingsapp.backend;
 
 import java.util.LinkedList;
-import java.util.UUID;
 
 import com.datastax.driver.core.*;
 
@@ -11,7 +10,7 @@ class UserController {
 
     private static PreparedStatement SELECT_ALL_USERS;
     private static PreparedStatement SELECT_USER_BY_ID;
-    private static PreparedStatement SELECT_USER_BY_PHONE;
+    private static PreparedStatement SELECT_USER_BY_NAME;
     private static PreparedStatement INSERT_USER;
     private static PreparedStatement DELETE_USER;
 
@@ -25,8 +24,8 @@ class UserController {
     private void prepareStatements() throws BackendException {
         try {
             SELECT_ALL_USERS = session.prepare("SELECT * FROM users;");
-            SELECT_USER_BY_ID = session.prepare("SELECT * FROM users WHERE userId=?;");
-            SELECT_USER_BY_PHONE = session.prepare("SELECT * FROM users WHERE phone=?;");
+            SELECT_USER_BY_ID = session.prepare("SELECT * FROM users WHERE name=? AND userId=?;");
+            SELECT_USER_BY_NAME = session.prepare("SELECT * FROM users WHERE name=?;");
             INSERT_USER = session.prepare("INSERT INTO users (userId, name, phone) VALUES (?,?,?);");
             DELETE_USER = session.prepare("DELETE FROM users WHERE userId=?;");
         } catch (Exception e) {
@@ -36,11 +35,11 @@ class UserController {
 
     public User createUser(String name, int phone) throws BackendException {
         BoundStatement insertUser = new BoundStatement(INSERT_USER);
-        BoundStatement selectUser = new BoundStatement(SELECT_USER_BY_PHONE);
+        BoundStatement selectUser = new BoundStatement(SELECT_USER_BY_NAME);
         ResultSet rs = null;
         User user = new User(name, phone);
         try {
-            selectUser.bind(user.phone);
+            selectUser.bind(user.name);
             rs = session.execute(selectUser);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -58,10 +57,8 @@ class UserController {
         return user;
     }
 
-    // deleteUser - deletes user and related reservations
     public void deleteUser(String userId) throws BackendException {
         BoundStatement deleteUser = new BoundStatement(DELETE_USER);
-        //TODO: delete reservations
         try {
             deleteUser.bind(userId);
             session.execute(deleteUser);
@@ -70,12 +67,12 @@ class UserController {
         }
     }
 
-    public User selectUserById(String userId) throws BackendException {
+    public User selectUserById(String userId, String userName) throws BackendException {
         BoundStatement selectUser = new BoundStatement(SELECT_USER_BY_ID);
         ResultSet rs = null;
 
         try {
-            selectUser.bind(userId);
+            selectUser.bind(userName, userId);
             rs = session.execute(selectUser);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);

@@ -1,20 +1,24 @@
 package trainingsapp.backend;
 
-import java.util.UUID;
-
 class Reservation {
     public String user;
+    public String userName;
     public String training;
+    public String trainingName;
     public long reservationTime;
     
-    public Reservation(String user, String training) {
+    public Reservation(String user, String userName, String training, String trainingName) {
         this.user = user;
+        this.userName = userName;
         this.training = training;
+        this.trainingName = trainingName;
     }
 
-    public Reservation(String user, String training, long reservationTime) {
+    public Reservation(String user, String userName, String training, String trainingName, long reservationTime) {
         this.user = user;
+        this.userName = userName;
         this.training = training;
+        this.trainingName = trainingName;
         this.reservationTime = reservationTime;
     }
 
