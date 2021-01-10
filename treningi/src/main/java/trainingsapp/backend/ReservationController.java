@@ -42,7 +42,7 @@ public class ReservationController {
         ResultSet rs = null;
         Reservation reservation = new Reservation(userId, userName, trainingId, trainingName);
         try {
-            selectReservation.bind(UUID.fromString(userId));
+            selectReservation.bind(UUID.fromString(trainingId), UUID.fromString(userId));
             rs = session.execute(selectReservation);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -125,12 +125,12 @@ public class ReservationController {
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
         }
-
-        String userName = rs.one().getString("userName");
-        String trainingName = rs.one().getString("trainingName");
-        long reservationTime = rs.one().getTimestamp("reservationTime").getTime();
-        
-
-        return new Reservation(userId, userName, trainingId, trainingName, reservationTime);
+	for (Row row : rs) {
+        	String userName = row.getString("userName");
+        	String trainingName = row.getString("trainingName");
+        	long reservationTime = row.getTimestamp("reservationTime").getTime();
+        	return new Reservation(userId, userName, trainingId, trainingName, reservationTime);
+        }
+	return null;
     }
 }

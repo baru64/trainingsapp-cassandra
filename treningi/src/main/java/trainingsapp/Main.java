@@ -12,7 +12,7 @@ public class Main {
 
 	private static final String PROPERTIES_FILENAME = "config.properties";
 
-	public static void main(String[] args) throws IOException, BackendException {
+	public static void main(String[] args) throws IOException, BackendException, InterruptedException {
 		String contactPoint = null;
 		String keyspace = null;
 
@@ -46,6 +46,7 @@ public class Main {
 
 		Client client = new Client(session, clientUser.name, clientUser.userId);
 		client.makeReservation(t1);
+		Thread.sleep(100);
 		ReservationStatus rs = client.getReservationStatus();
 		System.out.println("reservation submitted");
 		if (rs.isAccepted) System.out.println("accepted");

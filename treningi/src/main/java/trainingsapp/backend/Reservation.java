@@ -24,8 +24,7 @@ public class Reservation {
 
     public boolean equals(Reservation reservation) {
         return this.user.equals(reservation.user) &&
-               this.training.equals(reservation.training) &&
-               this.reservationTime == reservation.reservationTime;
+               this.training.equals(reservation.training);
     }
 
     public int compareTimestamp(Reservation reservation) {

@@ -18,11 +18,14 @@ class Client {
 
     public Client(BackendSession session, String userName, String userId) {
         this.backendSession = session;
+	this.userName = userName;
+	this.userId = userId;
     }
 
     public Reservation makeReservation(Training training) throws BackendException {
         backendSession.reservationController.createReservation(userId, userName, training.trainingId, training.name);
-        Reservation reservation = backendSession.reservationController
+        Reservation reservation = null;
+	while(reservation == null) reservation = backendSession.reservationController
                                     .selectReservationByUser(userId, training.trainingId);
         this.reservation = reservation;
         // save training for later
@@ -46,6 +49,13 @@ class Client {
         }
     }
 
+    private int findReservation(LinkedList<Reservation> list, Reservation reservation) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (list.get(i).equals(reservation)) return i;
+	}
+	return -1;
+    }
+
     public ReservationStatus getReservationStatus() throws BackendException {
         LinkedList<Reservation> reservations = backendSession.reservationController
                                                 .selectReservationsByTraining(this.reservation.training);
@@ -58,23 +68,21 @@ class Client {
             LinkedList<Reservation> relatedReservations = reservations.stream().filter(
                 r -> r.training.equals(t.trainingId)
             ).collect(Collectors.toCollection(LinkedList::new));
-            // reservationMap.put(t.name, relatedReservations);
             reservationsGrouped.add(new Pair<String, LinkedList<Reservation>>(t.name, relatedReservations));
         }
         // sort reservations and get one training per room
-        reservationsGrouped.sort((a, b) -> linkedListComparator(a.right, b.right));
+        reservationsGrouped.sort((a, b) -> linkedListComparator(b.right, a.right));
         List<Pair<String, LinkedList<Reservation>>> acceptedReservations = reservationsGrouped.subList(0, rooms.size());
-        rooms.sort((a,b) -> a.compareTo(b));
+        rooms.sort((a,b) -> b.compareTo(a));
         boolean isAccepted = false;
         boolean isOnReserveList = false;
         int reserveListPosition = 0;
         for (int i = 0; i < acceptedReservations.size(); ++i) {
-            acceptedReservations.get(i).right.sort((a, b) -> a.compareTimestamp(b));
-            int index = acceptedReservations.get(i).right.indexOf(this.reservation);
+            acceptedReservations.get(i).right.sort((a, b) -> b.compareTimestamp(a));
+            int index = findReservation(acceptedReservations.get(i).right, this.reservation);
             if (index != -1) {
                 isAccepted = true;
-                if (index <= rooms.get(i).capacity) isOnReserveList = false;
-                else {
+                if (index > rooms.get(i).capacity) {
                     isOnReserveList = true;
                     reserveListPosition = index - rooms.get(i).capacity;
                 }
