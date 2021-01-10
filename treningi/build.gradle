@@ -1,4 +1,4 @@
-description = 'CassandraDemo'
+description = 'Trainingsapp'
 apply plugin: 'base'
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -45,7 +45,7 @@ configurations.all {
 
 project.buildDir = 'bin'
 
-mainClassName = "cassdemo.Main"
+mainClassName = "trainingsapp.Main"
 
 run {
     //systemProperty 'logback.configurationFile', 'logback.xml'

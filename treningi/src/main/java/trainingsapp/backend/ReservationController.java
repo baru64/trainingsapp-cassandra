@@ -1,6 +1,7 @@
 package trainingsapp.backend;
 
 import java.util.LinkedList;
+import java.util.UUID;
 
 import com.datastax.driver.core.*;
 
@@ -24,7 +25,7 @@ public class ReservationController {
         try {
             SELECT_ALL_RESERVATIONS = session.prepare("SELECT * FROM reservations;");
             SELECT_RESERVATIONS_BY_TRAINING = session.prepare("SELECT * FROM reservations WHERE training=?;");
-            SELECT_RESERVATION_BY_USER = session.prepare("SELECT * FROM users WHERE training=? AND user=?;");
+            SELECT_RESERVATION_BY_USER = session.prepare("SELECT * FROM reservations WHERE training=? AND user=?;");
             INSERT_RESERVATION = session.prepare(
                 "INSERT INTO reservations (user, userName, training, trainingName, reservationTime) VALUES (?,?,?,?,toTimeStamp(now()));"
             );
@@ -41,7 +42,7 @@ public class ReservationController {
         ResultSet rs = null;
         Reservation reservation = new Reservation(userId, userName, trainingId, trainingName);
         try {
-            selectReservation.bind(userId);
+            selectReservation.bind(UUID.fromString(userId));
             rs = session.execute(selectReservation);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -51,7 +52,8 @@ public class ReservationController {
         } else {
             try {
                 insertReservation.bind(
-                    reservation.user, reservation.userName, reservation.training, reservation.trainingName
+                    UUID.fromString(reservation.user), reservation.userName,
+                    UUID.fromString(reservation.training), reservation.trainingName
                 );
                 session.execute(insertReservation);
             } catch (Exception e) {
@@ -63,7 +65,7 @@ public class ReservationController {
     public void deleteReservation(String userId, String trainingId) throws BackendException {
         BoundStatement deleteReservation = new BoundStatement(DELETE_RESERVATION);
         try {
-            deleteReservation.bind(trainingId, userId);
+            deleteReservation.bind(UUID.fromString(trainingId), UUID.fromString(trainingId));
             session.execute(deleteReservation);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -97,7 +99,7 @@ public class ReservationController {
         BoundStatement selectReservations = new BoundStatement(SELECT_RESERVATIONS_BY_TRAINING);
         ResultSet rs = null;
         try {
-            selectReservations.bind(trainingId);
+            selectReservations.bind(UUID.fromString(trainingId));
             rs = session.execute(selectReservations);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -118,7 +120,7 @@ public class ReservationController {
         BoundStatement selectReservation = new BoundStatement(SELECT_RESERVATION_BY_USER);
         ResultSet rs = null;
         try {
-            selectReservation.bind(userId, trainingId);
+            selectReservation.bind(UUID.fromString(trainingId), UUID.fromString(userId));
             rs = session.execute(selectReservation);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);

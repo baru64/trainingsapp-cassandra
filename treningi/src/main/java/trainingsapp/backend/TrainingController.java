@@ -1,6 +1,7 @@
 package trainingsapp.backend;
 
 import java.util.LinkedList;
+import java.util.UUID;
 
 import com.datastax.driver.core.*;
 
@@ -50,7 +51,7 @@ public class TrainingController {
         //     throw new BackendException("Training already exists.");
         // } else {
         try {
-            insertTraining.bind(training.trainingId, training.name, training.timeslot);
+            insertTraining.bind(UUID.fromString(training.trainingId), training.name, training.timeslot);
             session.execute(insertTraining);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -62,7 +63,7 @@ public class TrainingController {
     public void deleteTraining(String name, int timeslot, String trainingId) throws BackendException {
         BoundStatement deleteTraining = new BoundStatement(DELETE_TRAINING);
         try {
-            deleteTraining.bind(timeslot, name, trainingId);
+            deleteTraining.bind(timeslot, name, UUID.fromString(trainingId));
             session.execute(deleteTraining);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);

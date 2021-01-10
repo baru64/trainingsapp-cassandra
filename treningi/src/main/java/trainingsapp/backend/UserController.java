@@ -1,6 +1,7 @@
 package trainingsapp.backend;
 
 import java.util.LinkedList;
+import java.util.UUID;
 
 import com.datastax.driver.core.*;
 
@@ -27,7 +28,7 @@ public class UserController {
             SELECT_USER_BY_ID = session.prepare("SELECT * FROM users WHERE name=? AND userId=?;");
             SELECT_USER_BY_NAME = session.prepare("SELECT * FROM users WHERE name=?;");
             INSERT_USER = session.prepare("INSERT INTO users (userId, name, phone) VALUES (?,?,?);");
-            DELETE_USER = session.prepare("DELETE FROM users WHERE userId=?;");
+            DELETE_USER = session.prepare("DELETE FROM users WHERE name=?;");
         } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
         }
@@ -48,7 +49,7 @@ public class UserController {
             throw new BackendException("Users with this phone number exists.");
         } else {
             try {
-                insertUser.bind(user.userId, user.name, user.phone);
+                insertUser.bind(UUID.fromString(user.userId), user.name, user.phone);
                 session.execute(insertUser);
             } catch (Exception e) {
                 throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -57,10 +58,10 @@ public class UserController {
         return user;
     }
 
-    public void deleteUser(String userId) throws BackendException {
+    public void deleteUser(String userName) throws BackendException {
         BoundStatement deleteUser = new BoundStatement(DELETE_USER);
         try {
-            deleteUser.bind(userId);
+            deleteUser.bind(userName);
             session.execute(deleteUser);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -72,7 +73,7 @@ public class UserController {
         ResultSet rs = null;
 
         try {
-            selectUser.bind(userName, userId);
+            selectUser.bind(userName, UUID.fromString(userId));
             rs = session.execute(selectUser);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);

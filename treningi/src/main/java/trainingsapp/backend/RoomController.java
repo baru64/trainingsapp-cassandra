@@ -1,6 +1,7 @@
 package trainingsapp.backend;
 
 import java.util.LinkedList;
+import java.util.UUID;
 
 import com.datastax.driver.core.*;
 
@@ -32,7 +33,7 @@ public class RoomController {
         BoundStatement insertRoom = new BoundStatement(INSERT_ROOM);
         Room room = new Room(capacity);
         try {
-            insertRoom.bind(room.roomId, room.capacity);
+            insertRoom.bind(UUID.fromString(room.roomId), room.capacity);
             session.execute(insertRoom);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -43,7 +44,7 @@ public class RoomController {
     public void deleteRoom(String roomId) throws BackendException {
         BoundStatement deleteRoom = new BoundStatement(DELETE_ROOM);
         try {
-            deleteRoom.bind(roomId);
+            deleteRoom.bind(UUID.fromString(roomId));
             session.execute(deleteRoom);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
