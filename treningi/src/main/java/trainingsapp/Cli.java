@@ -1,0 +1,5 @@
+package trainingsapp;
+
+class Cli {
+
+}

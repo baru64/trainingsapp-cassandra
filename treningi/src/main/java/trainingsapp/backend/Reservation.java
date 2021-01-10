@@ -27,4 +27,10 @@ public class Reservation {
                this.training.equals(reservation.training) &&
                this.reservationTime == reservation.reservationTime;
     }
+
+    public int compareTimestamp(Reservation reservation) {
+        if (this.reservationTime == reservation.reservationTime) return 0;
+        else if (this.reservationTime > reservation.reservationTime) return 1;
+        else return -1;
+    }
 }

@@ -9,9 +9,9 @@ public class TrainingController {
     private final Session session;
 
     private static PreparedStatement SELECT_ALL_TRAININGS;
-    private static PreparedStatement SELECT_TRAININGS_BY_NAME;
+    private static PreparedStatement SELECT_TRAININGS_BY_TIME;
     // private static PreparedStatement SELECT_TRAINING_BY_NAME_AND_TIME;
-    private static PreparedStatement SELECT_TRAINING_BY_ID;
+    // private static PreparedStatement SELECT_TRAINING_BY_ID;
     private static PreparedStatement INSERT_TRAINING;
     private static PreparedStatement DELETE_TRAINING;
 
@@ -24,9 +24,9 @@ public class TrainingController {
     private void prepareStatements() throws BackendException {
         try {
             SELECT_ALL_TRAININGS = session.prepare("SELECT * FROM trainings;");
-            SELECT_TRAININGS_BY_NAME = session.prepare("SELECT * FROM trainings WHERE name=?;");
+            SELECT_TRAININGS_BY_TIME = session.prepare("SELECT * FROM trainings WHERE timeslot=?;");
             // SELECT_TRAINING_BY_NAME_AND_TIME = session.prepare("SELECT * FROM trainings WHERE name=? AND timeslot=?;");
-            SELECT_TRAINING_BY_ID = session.prepare("SELECT * FROM trainings WHERE name=? AND trainingId=?;");
+            // SELECT_TRAINING_BY_ID = session.prepare("SELECT * FROM trainings WHERE timeslot=? AND name=? AND trainingId=?;");
             INSERT_TRAINING = session.prepare("INSERT INTO trainings (trainingId, name, timeslot) VALUES (?,?,?);");
             DELETE_TRAINING = session.prepare("DELETE FROM trainings WHERE name=? AND timeslot=?;");
         } catch (Exception e) {
@@ -89,12 +89,12 @@ public class TrainingController {
         return trainings;
     }
 
-    public LinkedList<Training> selectTrainingsByName(String trainingName) throws BackendException {
+    public LinkedList<Training> selectTrainingsByTime(int timeslot) throws BackendException {
         LinkedList<Training> trainings = new LinkedList<>();
-        BoundStatement selectTrainings = new BoundStatement(SELECT_TRAININGS_BY_NAME);
+        BoundStatement selectTrainings = new BoundStatement(SELECT_TRAININGS_BY_TIME);
         ResultSet rs = null;
         try {
-            selectTrainings.bind(trainingName);
+            selectTrainings.bind(timeslot);
             rs = session.execute(selectTrainings);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
@@ -103,26 +103,25 @@ public class TrainingController {
         for (Row row : rs) {
             String trainingId = row.getUUID("trainingId").toString();
             String name = row.getString("name");
-            int timeslot = row.getInt("timeslot");
 
             trainings.add(new Training(trainingId, name, timeslot));
         }
         return trainings;
     }
     
-    public Training selectTrainingById(String trainingId, String trainingName) throws BackendException {
-        BoundStatement selectTraining = new BoundStatement(SELECT_TRAINING_BY_ID);
-        ResultSet rs = null;
-        try {
-            selectTraining.bind(trainingName, trainingId);
-            rs = session.execute(selectTraining);
-        } catch (Exception e) {
-            throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
-        }
+    // public Training selectTrainingById(String trainingId, int timeslot, String trainingName) throws BackendException {
+    //     BoundStatement selectTraining = new BoundStatement(SELECT_TRAINING_BY_ID);
+    //     ResultSet rs = null;
+    //     try {
+    //         selectTraining.bind(timeslot, trainingName, trainingId);
+    //         rs = session.execute(selectTraining);
+    //     } catch (Exception e) {
+    //         throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
+    //     }
 
-        String name = rs.one().getString("name");
-        int timeslot = rs.one().getInt("timeslot");
+    //     String name = rs.one().getString("name");
+    //     int timeslot = rs.one().getInt("timeslot");
 
-        return new Training(trainingId, name, timeslot);
-    }
+    //     return new Training(trainingId, name, timeslot);
+    // }
 }

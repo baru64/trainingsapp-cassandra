@@ -20,4 +20,10 @@ public class Room {
         return this.roomId.equals(room.roomId) &&
                this.capacity == room.capacity;
     }
+    
+    public int compareTo(Room room) {
+        if (this.capacity == room.capacity) return 0;
+        else if (this.capacity > room.capacity) return 1;
+        else return -1;
+    }
 }

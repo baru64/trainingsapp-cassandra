@@ -20,7 +20,7 @@ CREATE TABLE Trainings (
   trainingId UUID,
   name varchar,
   timeslot int,
-  PRIMARY KEY (name, trainingId)
+  PRIMARY KEY (timeslot, name, trainingId)
 );
 
 CREATE TABLE Reservations (
