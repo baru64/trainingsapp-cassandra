@@ -25,7 +25,9 @@ public class ReservationController {
             SELECT_ALL_RESERVATIONS = session.prepare("SELECT * FROM reservations;");
             SELECT_RESERVATIONS_BY_TRAINING = session.prepare("SELECT * FROM reservations WHERE training=?;");
             SELECT_RESERVATION_BY_USER = session.prepare("SELECT * FROM users WHERE training=? AND user=?;");
-            INSERT_RESERVATION = session.prepare("INSERT INTO reservations (user, trainingId) VALUES (?,?);");
+            INSERT_RESERVATION = session.prepare(
+                "INSERT INTO reservations (user, userName, training, trainingName, reservationTime) VALUES (?,?,?,?,toTimeStamp(now()));"
+            );
             DELETE_RESERVATION = session.prepare("DELETE FROM reservations WHERE training=? AND user=?;");
         } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
@@ -48,7 +50,9 @@ public class ReservationController {
             throw new BackendException("Reservation for this user exists.");
         } else {
             try {
-                insertReservation.bind(reservation.user, reservation.training);
+                insertReservation.bind(
+                    reservation.user, reservation.userName, reservation.training, reservation.trainingName
+                );
                 session.execute(insertReservation);
             } catch (Exception e) {
                 throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);

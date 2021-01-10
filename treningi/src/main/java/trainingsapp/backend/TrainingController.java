@@ -28,7 +28,7 @@ public class TrainingController {
             // SELECT_TRAINING_BY_NAME_AND_TIME = session.prepare("SELECT * FROM trainings WHERE name=? AND timeslot=?;");
             // SELECT_TRAINING_BY_ID = session.prepare("SELECT * FROM trainings WHERE timeslot=? AND name=? AND trainingId=?;");
             INSERT_TRAINING = session.prepare("INSERT INTO trainings (trainingId, name, timeslot) VALUES (?,?,?);");
-            DELETE_TRAINING = session.prepare("DELETE FROM trainings WHERE name=? AND timeslot=?;");
+            DELETE_TRAINING = session.prepare("DELETE FROM trainings WHERE timeslot=? AND name=? AND trainingId=?;");
         } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
         }
@@ -59,10 +59,10 @@ public class TrainingController {
         return training;
     }
 
-    public void deleteTraining(String name, int timeslot) throws BackendException {
+    public void deleteTraining(String name, int timeslot, String trainingId) throws BackendException {
         BoundStatement deleteTraining = new BoundStatement(DELETE_TRAINING);
         try {
-            deleteTraining.bind(name, timeslot);
+            deleteTraining.bind(timeslot, name, trainingId);
             session.execute(deleteTraining);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
