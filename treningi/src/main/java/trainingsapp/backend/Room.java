@@ -2,7 +2,7 @@ package trainingsapp.backend;
 
 import java.util.UUID;
 
-class Room {
+public class Room {
     public String roomId;
     public int capacity;
 

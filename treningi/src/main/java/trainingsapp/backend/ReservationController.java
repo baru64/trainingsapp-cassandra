@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.datastax.driver.core.*;
 
-class ReservationController {
+public class ReservationController {
 
     private final Session session;
 
@@ -23,10 +23,10 @@ class ReservationController {
     private void prepareStatements() throws BackendException {
         try {
             SELECT_ALL_RESERVATIONS = session.prepare("SELECT * FROM reservations;");
-            SELECT_RESERVATIONS_BY_TRAINING = session.prepare("SELECT * FROM reservations WHERE trainingId=?;");
-            SELECT_RESERVATION_BY_USER = session.prepare("SELECT * FROM users WHERE trainingId=? AND user=?;");
+            SELECT_RESERVATIONS_BY_TRAINING = session.prepare("SELECT * FROM reservations WHERE training=?;");
+            SELECT_RESERVATION_BY_USER = session.prepare("SELECT * FROM users WHERE training=? AND user=?;");
             INSERT_RESERVATION = session.prepare("INSERT INTO reservations (user, trainingId) VALUES (?,?);");
-            DELETE_RESERVATION = session.prepare("DELETE FROM reservations WHERE user=?;");
+            DELETE_RESERVATION = session.prepare("DELETE FROM reservations WHERE training=? AND user=?;");
         } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
         }
@@ -56,10 +56,10 @@ class ReservationController {
         }
     }
 
-    public void deleteReservation(String userId) throws BackendException {
+    public void deleteReservation(String userId, String trainingId) throws BackendException {
         BoundStatement deleteReservation = new BoundStatement(DELETE_RESERVATION);
         try {
-            deleteReservation.bind(userId);
+            deleteReservation.bind(trainingId, userId);
             session.execute(deleteReservation);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);

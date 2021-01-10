@@ -4,13 +4,13 @@ import java.util.LinkedList;
 
 import com.datastax.driver.core.*;
 
-class TrainingController {
+public class TrainingController {
 
     private final Session session;
 
     private static PreparedStatement SELECT_ALL_TRAININGS;
     private static PreparedStatement SELECT_TRAININGS_BY_NAME;
-    private static PreparedStatement SELECT_TRAINING_BY_NAME_AND_TIME;
+    // private static PreparedStatement SELECT_TRAINING_BY_NAME_AND_TIME;
     private static PreparedStatement SELECT_TRAINING_BY_ID;
     private static PreparedStatement INSERT_TRAINING;
     private static PreparedStatement DELETE_TRAINING;

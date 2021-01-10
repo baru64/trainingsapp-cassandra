@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.datastax.driver.core.*;
 
-class RoomController {
+public class RoomController {
 
     private final Session session;
 

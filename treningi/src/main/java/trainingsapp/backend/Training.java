@@ -2,7 +2,7 @@ package trainingsapp.backend;
 
 import java.util.UUID;
 
-class Training {
+public class Training {
     public String trainingId;
     public String name;
     public int timeslot;

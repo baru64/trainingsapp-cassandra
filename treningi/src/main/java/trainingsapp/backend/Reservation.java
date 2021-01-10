@@ -1,6 +1,6 @@
 package trainingsapp.backend;
 
-class Reservation {
+public class Reservation {
     public String user;
     public String userName;
     public String training;

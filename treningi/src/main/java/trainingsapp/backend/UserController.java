@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.datastax.driver.core.*;
 
-class UserController {
+public class UserController {
 
     private final Session session;
 
