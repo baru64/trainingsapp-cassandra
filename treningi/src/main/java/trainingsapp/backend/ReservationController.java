@@ -67,7 +67,7 @@ public class ReservationController {
     public void deleteReservation(String userId, String trainingId) throws BackendException {
         BoundStatement deleteReservation = new BoundStatement(DELETE_RESERVATION);
         try {
-            deleteReservation.bind(UUID.fromString(trainingId), UUID.fromString(trainingId));
+            deleteReservation.bind(UUID.fromString(trainingId), UUID.fromString(userId));
             session.execute(deleteReservation);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);

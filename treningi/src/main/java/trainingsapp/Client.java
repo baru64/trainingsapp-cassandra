@@ -35,7 +35,7 @@ class Client {
 
     public void cancelReservation() throws BackendException {
 	if (this.reservation == null) return;
-        backendSession.reservationController.deleteReservation(this.reservation.training, this.userId);
+        backendSession.reservationController.deleteReservation(this.userId, this.reservation.training);
         this.reservation = null;
         this.training = null;
     }
