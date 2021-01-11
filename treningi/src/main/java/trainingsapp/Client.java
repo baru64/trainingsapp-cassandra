@@ -75,10 +75,8 @@ class Client {
         boolean isOnReserveList = false;
         int reserveListPosition = 0;
         for (int i = 0; i < acceptedReservations.size(); ++i) {
-            acceptedReservations.get(i).right.sort((a, b) -> b.compareTimestamp(a));
-	    for (Reservation r : acceptedReservations.get(i).right) System.out.printf("%s | ", r.userName);
+            acceptedReservations.get(i).right.sort((a, b) -> a.compareTimestamp(b));
             int index = findReservation(acceptedReservations.get(i).right, this.reservation);
-	    System.out.println("index: " + index);
             if (index != -1) {
                 isAccepted = true;
                 if (index+1 > rooms.get(i).capacity) {
