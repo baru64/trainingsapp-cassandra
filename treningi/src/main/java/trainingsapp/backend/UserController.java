@@ -14,6 +14,7 @@ public class UserController {
     private static PreparedStatement SELECT_USER_BY_NAME;
     private static PreparedStatement INSERT_USER;
     private static PreparedStatement DELETE_USER;
+    private static PreparedStatement DELETE_ALL;
 
 
     public UserController(Session session) throws BackendException {
@@ -29,6 +30,7 @@ public class UserController {
             SELECT_USER_BY_NAME = session.prepare("SELECT * FROM users WHERE name=?;");
             INSERT_USER = session.prepare("INSERT INTO users (userId, name, phone) VALUES (?,?,?);");
             DELETE_USER = session.prepare("DELETE FROM users WHERE name=?;");
+            DELETE_ALL = session.prepare("TRUNCATE users;");
         } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
         }
@@ -63,6 +65,15 @@ public class UserController {
         try {
             deleteUser.bind(userName);
             session.execute(deleteUser);
+        } catch (Exception e) {
+            throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
+        }
+    }
+
+    public void deleteAllUsers() throws BackendException {
+        BoundStatement deleteAll = new BoundStatement(DELETE_ALL);
+        try {
+            session.execute(deleteAll);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
         }

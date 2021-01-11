@@ -15,6 +15,7 @@ public class TrainingController {
     // private static PreparedStatement SELECT_TRAINING_BY_ID;
     private static PreparedStatement INSERT_TRAINING;
     private static PreparedStatement DELETE_TRAINING;
+    private static PreparedStatement DELETE_ALL;
 
     public TrainingController(Session session) throws BackendException {
         this.session = session;
@@ -30,6 +31,7 @@ public class TrainingController {
             // SELECT_TRAINING_BY_ID = session.prepare("SELECT * FROM trainings WHERE timeslot=? AND name=? AND trainingId=?;");
             INSERT_TRAINING = session.prepare("INSERT INTO trainings (trainingId, name, timeslot) VALUES (?,?,?);");
             DELETE_TRAINING = session.prepare("DELETE FROM trainings WHERE timeslot=? AND name=? AND trainingId=?;");
+            DELETE_ALL = session.prepare("TRUNCATE trainings;");
         } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
         }
@@ -65,6 +67,15 @@ public class TrainingController {
         try {
             deleteTraining.bind(timeslot, name, UUID.fromString(trainingId));
             session.execute(deleteTraining);
+        } catch (Exception e) {
+            throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
+        }
+    }
+
+    public void deleteAllTrainings() throws BackendException {
+        BoundStatement deleteAll = new BoundStatement(DELETE_ALL);
+        try {
+            session.execute(deleteAll);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
         }

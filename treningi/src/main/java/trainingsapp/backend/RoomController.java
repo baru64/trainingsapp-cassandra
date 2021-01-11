@@ -12,6 +12,7 @@ public class RoomController {
     private static PreparedStatement SELECT_ALL_ROOMS;
     private static PreparedStatement INSERT_ROOM;
     private static PreparedStatement DELETE_ROOM;
+    private static PreparedStatement DELETE_ALL;
 
     public RoomController(Session session) throws BackendException {
         this.session = session;
@@ -24,6 +25,7 @@ public class RoomController {
             SELECT_ALL_ROOMS = session.prepare("SELECT * FROM rooms;");
             INSERT_ROOM = session.prepare("INSERT INTO rooms (roomId, capacity) VALUES (?,?);");
             DELETE_ROOM = session.prepare("DELETE FROM rooms WHERE roomId=?;");
+            DELETE_ALL = session.prepare("TRUNCATE rooms;");
         } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
         }
@@ -46,6 +48,15 @@ public class RoomController {
         try {
             deleteRoom.bind(UUID.fromString(roomId));
             session.execute(deleteRoom);
+        } catch (Exception e) {
+            throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
+        }
+    }
+
+    public void deleteAllRooms() throws BackendException {
+        BoundStatement deleteAll = new BoundStatement(DELETE_ALL);
+        try {
+            session.execute(deleteAll);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
         }

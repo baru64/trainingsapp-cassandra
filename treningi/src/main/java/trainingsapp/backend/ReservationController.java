@@ -14,6 +14,7 @@ public class ReservationController {
     private static PreparedStatement SELECT_RESERVATION_BY_USER;
     private static PreparedStatement INSERT_RESERVATION;
     private static PreparedStatement DELETE_RESERVATION;
+    private static PreparedStatement DELETE_ALL;
 
     public ReservationController(Session session) throws BackendException {
         this.session = session;
@@ -30,6 +31,7 @@ public class ReservationController {
                 "INSERT INTO reservations (user, userName, training, trainingName, reservationTime) VALUES (?,?,?,?,toTimeStamp(now()));"
             );
             DELETE_RESERVATION = session.prepare("DELETE FROM reservations WHERE training=? AND user=?;");
+            DELETE_ALL = session.prepare("TRUNCATE reservations;");
         } catch (Exception e) {
             throw new BackendException("Could not prepare statements" + e.getMessage() + ".", e);
         }
@@ -67,6 +69,15 @@ public class ReservationController {
         try {
             deleteReservation.bind(UUID.fromString(trainingId), UUID.fromString(trainingId));
             session.execute(deleteReservation);
+        } catch (Exception e) {
+            throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
+        }
+    }
+
+    public void deleteAllReservations() throws BackendException {
+        BoundStatement deleteAll = new BoundStatement(DELETE_ALL);
+        try {
+            session.execute(deleteAll);
         } catch (Exception e) {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
         }

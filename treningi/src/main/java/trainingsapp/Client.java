@@ -16,10 +16,10 @@ class Client {
     private Reservation reservation;
     private Training training;
 
-    public Client(BackendSession session, String userName, String userId) {
+    public Client(BackendSession session, User user) {
         this.backendSession = session;
-	this.userName = userName;
-	this.userId = userId;
+	    this.userName = user.name;
+	    this.userId = user.userId;
     }
 
     public Reservation makeReservation(Training training) throws BackendException {
