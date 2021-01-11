@@ -1,6 +1,7 @@
 package trainingsapp;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -11,13 +12,13 @@ import trainingsapp.backend.Training;
 class Simulation{
 
     class SimulationStats {
-        public AtomicInteger[] accepted;
-        public AtomicInteger[] reserveList;
+        public AtomicIntegerArray accepted;
+        public AtomicIntegerArray reserveList;
         public AtomicInteger cancelled;
 
         public SimulationStats() {
-            this.accepted = new AtomicInteger[10];
-            this.reserveList = new AtomicInteger[10];
+            this.accepted = new AtomicIntegerArray(10);
+            this.reserveList = new AtomicIntegerArray(10);
             this.cancelled = new AtomicInteger();
         }
 
@@ -25,8 +26,8 @@ class Simulation{
             String acceptedStr = new String("Accepted");
             String reserveStr = new String("Reserve");
             for (int i = 0; i < 10; ++i) {
-                acceptedStr += " > " + this.accepted[i].get();
-                reserveStr += " > " + this.reserveList[i].get();
+                acceptedStr += " > " + this.accepted.get(i);
+                reserveStr += " > " + this.reserveList.get(i);
             }
             System.out.printf("%s\n%s\nCancelled: %d\n", acceptedStr, reserveStr, this.cancelled.get());
         }
@@ -71,5 +72,7 @@ class Simulation{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+	s1.print();
+	s2.print();
 	}
 }

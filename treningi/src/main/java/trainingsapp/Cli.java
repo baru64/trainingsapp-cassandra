@@ -33,8 +33,16 @@ class Cli {
 		}
 		System.out.println("Enter username:");
 		String name = input.nextLine();
-		User user = new User(name, 123456789);
-        Client client = new Client(session, user);
+		System.out.println("Enter phone number:");
+		int phone = input.nextInt();
+		User user = null;
+		try {
+			user = session.userController.createUser(name, phone);
+		} catch (BackendException e) {
+            		System.out.println("Could not perform a query. " + e.getMessage() + ".");
+            		return;
+		}
+        	Client client = new Client(session, user);
 		while (true) {
 			System.out.println(
 				"Choose an action:\n1 - make reservation\n2 - cancel reservation\n3 - check reservation\n4 - exit\n"
@@ -67,6 +75,7 @@ class Cli {
 						System.out.println("Could not perform a query. " + e.getMessage() + ".");
 						break;
         			}
+					if (reservationStatus == null) break;
 					System.out.printf(
 						"Status:\nAccepted: %b\nOn reserve list: %b\nReserve list position: %d\n",
 						reservationStatus.isAccepted, reservationStatus.isOnReserveList, reservationStatus.reserveListPosition

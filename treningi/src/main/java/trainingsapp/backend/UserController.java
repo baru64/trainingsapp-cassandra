@@ -48,7 +48,7 @@ public class UserController {
             throw new BackendException("Could not perform a query. " + e.getMessage() + ".", e);
         }
         if (rs.iterator().hasNext()) {
-            throw new BackendException("Users with this phone number exists.");
+            throw new BackendException("User with this phone number exists.");
         } else {
             try {
                 insertUser.bind(UUID.fromString(user.userId), user.name, user.phone);

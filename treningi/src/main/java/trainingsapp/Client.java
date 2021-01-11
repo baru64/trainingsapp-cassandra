@@ -34,19 +34,14 @@ class Client {
     }
 
     public void cancelReservation() throws BackendException {
+	if (this.reservation == null) return;
         backendSession.reservationController.deleteReservation(this.reservation.training, this.userId);
         this.reservation = null;
         this.training = null;
     }
 
     private <T> int linkedListComparator(LinkedList<T> a, LinkedList<T> b) {
-        if (a.size() == b.size()) {
-            return 0;
-        } else if (a.size() > b.size()) {
-            return 1;
-        } else {
-            return -1;
-        }
+	return a.size() - b.size();
     }
 
     private int findReservation(LinkedList<Reservation> list, Reservation reservation) {
@@ -57,10 +52,12 @@ class Client {
     }
 
     public ReservationStatus getReservationStatus() throws BackendException {
-        LinkedList<Reservation> reservations = backendSession.reservationController
-                                                .selectReservationsByTraining(this.reservation.training);
+	if (this.reservation == null) return null;
+        LinkedList<Reservation> reservations = backendSession.reservationController.selectAllReservations();
         LinkedList<Room> rooms = backendSession.roomController.selectAllRooms();
         LinkedList<Training> trainings = backendSession.trainingController.selectTrainingsByTime(training.timeslot);
+	// sort reservations
+	// reservations.sort((a, b) -> Math.toIntExact(b.reservationTime - a.reservationTime));
         // group reservations
         LinkedList<Pair<String, LinkedList<Reservation>>> reservationsGrouped =
             new LinkedList<Pair<String, LinkedList<Reservation>>>();
@@ -79,13 +76,16 @@ class Client {
         int reserveListPosition = 0;
         for (int i = 0; i < acceptedReservations.size(); ++i) {
             acceptedReservations.get(i).right.sort((a, b) -> b.compareTimestamp(a));
+	    for (Reservation r : acceptedReservations.get(i).right) System.out.printf("%s | ", r.userName);
             int index = findReservation(acceptedReservations.get(i).right, this.reservation);
+	    System.out.println("index: " + index);
             if (index != -1) {
                 isAccepted = true;
-                if (index > rooms.get(i).capacity) {
+                if (index+1 > rooms.get(i).capacity) {
                     isOnReserveList = true;
                     reserveListPosition = index - rooms.get(i).capacity;
                 }
+		break;
             }
         }
         return new ReservationStatus(reservation, isAccepted, isOnReserveList, reserveListPosition);

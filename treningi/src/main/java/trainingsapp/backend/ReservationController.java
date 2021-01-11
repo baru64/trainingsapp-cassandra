@@ -96,7 +96,7 @@ public class ReservationController {
         for (Row row : rs) {
             String user = row.getUUID("user").toString();
             String userName = row.getString("userName");
-            String trainingId = row.getUUID("trainingId").toString();
+            String trainingId = row.getUUID("training").toString();
             String trainingName = row.getString("trainingName");
             long reservationTime = row.getTimestamp("reservationTime").getTime();
 
