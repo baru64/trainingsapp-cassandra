@@ -1,6 +1,8 @@
 package trainingsapp;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import trainingsapp.backend.BackendException;
 import trainingsapp.backend.BackendSession;
@@ -8,10 +10,32 @@ import trainingsapp.backend.Training;
 
 class Simulation{
 
+    class SimulationStats {
+        public AtomicInteger[] accepted;
+        public AtomicInteger[] reserveList;
+        public AtomicInteger cancelled;
+
+        public SimulationStats() {
+            this.accepted = new AtomicInteger[10];
+            this.reserveList = new AtomicInteger[10];
+            this.cancelled = new AtomicInteger();
+        }
+
+        public void print() {
+            String acceptedStr = new String("Accepted");
+            String reserveStr = new String("Reserve");
+            for (int i = 0; i < 10; ++i) {
+                acceptedStr += " > " + this.accepted[i].get();
+                reserveStr += " > " + this.reserveList[i].get();
+            }
+            System.out.printf("%s\n%s\nCancelled: %d\n", acceptedStr, reserveStr, this.cancelled.get());
+        }
+    }
+
     public BackendSession session;
 
     public Simulation(BackendSession session) {
-	    this.session = session;
+        this.session = session;
     }
 
 	public void start(String[] args){
@@ -31,10 +55,12 @@ class Simulation{
 		    numberOfThreads = Integer.parseInt(args[1]);
         }
         LinkedList<Runner> runners = new LinkedList<>();
+        SimulationStats s1 = new SimulationStats();
+        SimulationStats s2 = new SimulationStats();
 		for(int i=0; i < numberOfThreads; i++){
             Runner runner = null;
-            if (i%2 == 0) runner = new Runner(session, i, t1);
-            else runner = new Runner(session, i, t2);
+            if (i%2 == 0) runner = new Runner(session, i, t1, s1, 10);
+            else runner = new Runner(session, i, t2, s2, 10);
             runner.start();
             runners.add(runner);
         }

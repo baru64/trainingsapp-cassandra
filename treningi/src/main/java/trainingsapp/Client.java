@@ -25,7 +25,7 @@ class Client {
     public Reservation makeReservation(Training training) throws BackendException {
         backendSession.reservationController.createReservation(userId, userName, training.trainingId, training.name);
         Reservation reservation = null;
-	while(reservation == null) reservation = backendSession.reservationController
+	    while(reservation == null) reservation = backendSession.reservationController
                                     .selectReservationByUser(userId, training.trainingId);
         this.reservation = reservation;
         // save training for later
