@@ -27,22 +27,22 @@ class Cli {
         }
 		for (int i = 0; i < trainings.size(); ++i) {
 			System.out.println(
-				i + ") ID: "+ trainings.get(i).trainingId + " | nazwa: " + trainings.get(i).name +
-				" | czas: " + trainings.get(i).timeslot
+				i + ") ID: "+ trainings.get(i).trainingId + " | name: " + trainings.get(i).name +
+				" | time: " + trainings.get(i).timeslot
 			);
 		}
-		System.out.println("Wprowadz swoje imie i nazwisko");
+		System.out.println("Enter username:");
 		String name = input.nextLine();
 		User user = new User(name, 123456789);
         Client client = new Client(session, user);
 		while (true) {
 			System.out.println(
-				"Wybierz co chcesz zrobić:\n1 - zrób rezerwacje\n2 - anuluj rezerwacje\n3 - sprawdź rezerwacje\n4 - wyjdź\n"
+				"Choose an action:\n1 - make reservation\n2 - cancel reservation\n3 - check reservation\n4 - exit\n"
 			);
 			int op = input.nextInt();
 			switch(op) {
 				case 1:
-					System.out.println("Wprowadz numer zajęć na które chcesz zrobić rezerwację");
+					System.out.println("Enter training number ");
 					int trainingNum = input.nextInt();
 					try {
 						client.makeReservation(trainings.get(trainingNum));
@@ -68,7 +68,7 @@ class Cli {
 						break;
         			}
 					System.out.printf(
-						"Akceptacja: %b\nLista rezerwowa: %b\nPozycja na liście: %d\n",
+						"Status:\nAccepted: %b\nOn reserve list: %b\nReserve list position: %d\n",
 						reservationStatus.isAccepted, reservationStatus.isOnReserveList, reservationStatus.reserveListPosition
 					);
 					break;
