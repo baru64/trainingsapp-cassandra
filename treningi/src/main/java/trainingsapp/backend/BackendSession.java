@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.QueryOptions;
 import com.datastax.driver.core.Session;
 
 /*
@@ -28,7 +30,9 @@ public class BackendSession {
 
 	public BackendSession(String contactPoint, String keyspace) throws BackendException {
 
-		Cluster cluster = Cluster.builder().addContactPoint(contactPoint).build();
+		Cluster cluster = Cluster.builder().addContactPoint(contactPoint).withQueryOptions(
+			new QueryOptions().setConsistencyLevel(ConsistencyLevel.ONE)
+		).build();
 		try {
 			session = cluster.connect(keyspace);
 		} catch (Exception e) {
